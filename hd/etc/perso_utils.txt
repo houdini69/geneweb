@@ -11,7 +11,13 @@
 %end;
 
 %define;get_templ(tplnum)
-  %let;templ;perso_module/%bvar.module_perso_tplnum;%in
+  %let;templ;
+    %if;(evar.module_perso_tplnum != "")
+      perso_module/%evar.module_perso_tplnum;
+    %else;
+      perso_module/%bvar.module_perso_tplnum;
+    %end;
+  %in;
   %apply;show_templ(templ)
 %end;
 

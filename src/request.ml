@@ -357,7 +357,7 @@ value set_senv conf vm vi =
   }
 ;
 
-value make_senv conf base =
+value make_senv conf base = do {
   let get x = Util.p_getenv conf.env x in
   match (get "em", get "ei", get "ep", get "en", get "eoc") with
   [ (Some vm, Some vi, _, _, _) -> set_senv conf vm vi
@@ -373,7 +373,16 @@ value make_senv conf base =
         | None -> do { incorrect_request conf; raise Exit } ]
       in
       let vi = string_of_int (Adef.int_of_iper ip) in set_senv conf vm vi
-  | _ -> () ]
+  | _ -> () ];
+  match p_getint conf.base_env "module_perso_tplnb" with
+  [ Some n ->
+      for i = 0 to n do {
+        let module_perso_lbl = "module_perso_" ^ string_of_int i in
+        match p_getenv conf.env module_perso_lbl with
+        [ Some x -> conf.senv := conf.senv @ [(module_perso_lbl, x)]
+        | None -> () ];
+      }
+  | None -> () ]}
 ;
 
 value updmenu_print = Perso.interp_templ "updmenu";
